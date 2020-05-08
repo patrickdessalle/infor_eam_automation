@@ -4,7 +4,7 @@ setup(
     name='cmms',
     version='0.1',
     description='Python module to interact with Infor EAM software using Selenium',
-    url='git@github.com:patrickdessalle/biogen-cmms',
+    url='git@github.com:patrickdessalle/infor-eam-automation',
     author='Patrick Dessalle',
     author_email='patrick@dessalle.be',
     license='Proprietary',
