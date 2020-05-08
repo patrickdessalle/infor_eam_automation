@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='cmms',
     version='0.1',
-    description='Python module to interact with Biogen CMMS software (Infor EAM)',
+    description='Python module to interact with Infor EAM software using Selenium',
     url='git@github.com:patrickdessalle/biogen-cmms',
     author='Patrick Dessalle',
     author_email='patrick@dessalle.be',
