@@ -143,7 +143,7 @@ class CMMS(object):
     
     def click_bottom_tab(self, label):
         ''' Clicks on the bottom tabs, if the user has the option. Not available for all users '''
-        // Never click on the iframe
+        # Never click on the iframe
         self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-bottom']//a[text()='" + label + "']").click()
         self.wait_mask()
         
