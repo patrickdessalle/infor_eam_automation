@@ -36,7 +36,7 @@ class CMMS(object):
             
     def wait_mask(self, wait=1):
         try:
-            WebDriverWait(self.driver, 3).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "body.x-masked"))
             )
         except:
@@ -84,19 +84,67 @@ class CMMS(object):
         self.find_element(By.LINK_TEXT, label).click()
         
     def click_toolbar_save(self):
+        ''' Clicks on "Save Record (Ctrl+S) in the main toolbar '''
         self.click_toolbar("Save Record (Ctrl+S)")
         time.sleep(5)
         
     def click_toolbar_new(self):
+        ''' Clicks on "New Record (Ctrl+N) in the main toolbar '''
         self.click_toolbar("New Record (Ctrl+N)")
         time.sleep(5)
         
     def click_toolbar(self, qtip):
+        ''' Clicks on an element in the main toolbar '''
         try:
             self.driver.switch_to.frame(0)
         except: # User doesn't have frame
             pass
-        self.find_element(By.CSS_SELECTOR, "a[data-qtip='" + qtip + "']").click()
+        self.find_element(By.CSS_SELECTOR, "div.x-toolbar[id^='maintoolbar-'] a[data-qtip='" + qtip + "']").click()
+        self.wait_mask()
+        
+    def click_subtoolbar(self, qtip):
+        ''' Clicks on an element in a toolbar (not main, likely lower on the page) '''
+        try:
+            self.driver.switch_to.frame(0)
+        except: # User doesn't have frame
+            pass
+        self.find_element(By.CSS_SELECTOR, "div.x-toolbar[id^='toolbar-'] a[data-qtip='" + qtip + "']").click()
+        self.wait_mask()
+        
+    def click_tab(self, label):
+        ''' Clicks on the top tabbar on the screen'''
+        try:
+            self.driver.switch_to.frame(0)
+        except: # User doesn't have frame
+            pass
+        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-top']//a[text()='" + label + "']").click()
+        self.wait_mask()
+        
+    def filter_tab(self, field, value):
+        ''' Do a simple filtering (one field, one value). Does only support contains for now '''
+        input_field = self.find_element(By.CSS_SELECTOR, "div.x-toolbar-dataspy input[name='filterfields']")
+        input_field.clear()
+        input_field.send_keys(field)
+        
+        input_value = self.find_element(By.CSS_SELECTOR, "div.x-toolbar-dataspy input[name='selfiltervaluectrl']")
+        input_value.clear()
+        input_value.send_keys(value)
+        
+        #Click run
+        self.find_element(By.CSS_SELECTOR, "div.x-toolbar-dataspy a.uft-id-run").click()
+        self.wait_mask()
+        
+        # Return the results
+        return self.driver.find_elements(By.CSS_SELECTOR, "div.x-grid>div.x-panel-body>div>table>tbody>tr")
+        
+    def select_tab_result(self, index):
+        self.driver.find_elements(By.CSS_SELECTOR, "div.x-grid>div.x-panel-body>div>table>tbody>tr")[index].click()
+        self.wait_mask()
+    
+    def click_bottom_tab(self, label):
+        ''' Clicks on the bottom tabs, if the user has the option. Not available for all users '''
+        // Never click on the iframe
+        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-bottom']//a[text()='" + label + "']").click()
         self.wait_mask()
         
     def fill_input(self, label, value, index=0):
