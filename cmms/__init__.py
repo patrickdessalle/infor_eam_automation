@@ -117,7 +117,7 @@ class CMMS(object):
             self.driver.switch_to.frame(0)
         except: # User doesn't have frame
             pass
-        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-top']//a[text()='" + label + "']").click()
+        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-top')]//a[text()='" + label + "']").click()
         self.wait_mask()
         
     def filter_tab(self, field, value):
