@@ -8,6 +8,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -17,6 +18,7 @@ class CMMS(object):
         self.driver = webdriver.Chrome()
 
     def request_login(self):
+        self.driver.maximize_window()
         self.driver.get(self.url)
         
         try:
@@ -34,7 +36,8 @@ class CMMS(object):
             raise("Could not login to CMMS")
             
             
-    def wait_mask(self, wait=1):
+    def wait_mask(self, wait=1): # TODO : Improve it
+        ''' Waits for the mask to be deleted. '''
         try:
             WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "body.x-masked"))
@@ -117,18 +120,24 @@ class CMMS(object):
             self.driver.switch_to.frame(0)
         except: # User doesn't have frame
             pass
-        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-top')]//a[text()='" + label + "']").click()
+        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-top')]//a//span[text()='" + label + "']").click()
         self.wait_mask()
         
     def filter_tab(self, field, value):
         ''' Do a simple filtering (one field, one value). Does only support contains for now '''
         input_field = self.find_element(By.CSS_SELECTOR, "div.x-toolbar-dataspy input[name='filterfields']")
         input_field.clear()
+        time.sleep(0.5)
         input_field.send_keys(field)
+        input_field.send_keys(Keys.RETURN)
+        time.sleep(0.5)
+        
         
         input_value = self.find_element(By.CSS_SELECTOR, "div.x-toolbar-dataspy input[name='selfiltervaluectrl']")
         input_value.clear()
+        time.sleep(0.5)
         input_value.send_keys(value)
+        time.sleep(0.5)
         
         #Click run
         self.find_element(By.CSS_SELECTOR, "div.x-toolbar-dataspy a.uft-id-run").click()
@@ -144,11 +153,11 @@ class CMMS(object):
     def click_bottom_tab(self, label):
         ''' Clicks on the bottom tabs, if the user has the option. Not available for all users '''
         # Never click on the iframe
-        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-bottom']//a[text()='" + label + "']").click()
+        self.find_element(By.XPATH, "//div[contains(@class, 'x-tab-bar-bottom')]//a//span[text()='" + label + "']").click()
         self.wait_mask()
         
     def fill_input(self, label, value, index=0):
-        input = self.driver.find_elements(By.XPATH, "//label[text()='"  + label + "']/parent::td/following-sibling::td//input")[index]
+        input = [i for i in self.driver.find_elements(By.XPATH, "//label[text()='"  + label + "']/parent::td/following-sibling::td//input") if i.is_displayed()][index]
         input.clear()
         time.sleep(0.5)
         input.send_keys(value)
